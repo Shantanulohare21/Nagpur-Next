@@ -16,6 +16,8 @@ export interface ClinicalHistory {
 
 export interface ScanFile {
   name: string; type: string; size: number; uploadedAt: string; modality: "MRI" | "CT" | "XRAY" | "DICOM";
+  dataUrl?: string;
+  previewUrl?: string;
 }
 
 export interface AnalysisResult {

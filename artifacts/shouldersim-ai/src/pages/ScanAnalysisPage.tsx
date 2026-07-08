@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { usePatient, generateAnalysis } from "@/contexts/PatientContext";
 import { WorkflowBanner } from "@/components/WorkflowBanner";
+import { ShoulderAnatomyViewer } from "@/components/ShoulderAnatomyViewer";
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
 const ANALYSIS_STEPS = [
@@ -248,6 +249,95 @@ function ResultsDashboard() {
         <AnimatePresence mode="wait">
           <motion.div key={activeTab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
             {activeTab === "overview" && (
+              <div className="space-y-5">
+
+                {/* ── ANATOMY VIEWER + UPLOADED SCANS ────────────────────── */}
+                <div className="grid lg:grid-cols-2 gap-4">
+                  <div className="bg-[hsl(222,47%,8%)] border border-teal-500/20 rounded-2xl p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-6 h-6 rounded-lg bg-teal-500/20 border border-teal-500/30 flex items-center justify-center">
+                        <Scan className="w-3.5 h-3.5 text-teal-400" />
+                      </div>
+                      <h3 className="text-sm font-bold text-white">Shoulder Anatomy Model</h3>
+                      <span className="ml-auto text-[10px] text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-full border border-teal-500/20">Evidence-Based</span>
+                    </div>
+                    <ShoulderAnatomyViewer
+                      analysis={a}
+                      scanImage={state.scans.find(s => s.previewUrl)?.previewUrl}
+                      scanModality={state.scans.find(s => s.previewUrl)?.modality}
+                      showImplant={true}
+                      height={360}
+                    />
+                  </div>
+
+                  <div className="bg-[hsl(222,47%,8%)] border border-[hsl(217,32%,16%)] rounded-2xl p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-6 h-6 rounded-lg bg-violet-500/20 border border-violet-500/30 flex items-center justify-center">
+                        <FileText className="w-3.5 h-3.5 text-violet-400" />
+                      </div>
+                      <h3 className="text-sm font-bold text-white">Uploaded Scans</h3>
+                      <span className="ml-auto text-[10px] text-slate-500">{state.scans.length} file{state.scans.length !== 1 ? "s" : ""}</span>
+                    </div>
+
+                    {state.scans.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center h-60 text-center">
+                        <div className="w-12 h-12 rounded-xl bg-[hsl(222,47%,11%)] border border-[hsl(217,32%,18%)] flex items-center justify-center mb-3">
+                          <FileText className="w-5 h-5 text-slate-600" />
+                        </div>
+                        <p className="text-sm text-slate-500">No scans uploaded</p>
+                        <p className="text-xs text-slate-600 mt-1">Upload CT/X-ray images in the Patient Intake step</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <div className="grid grid-cols-2 gap-2">
+                          {state.scans.filter(s => s.previewUrl).map((scan, i) => (
+                            <div key={i} className="relative rounded-xl overflow-hidden bg-black border border-[hsl(217,32%,18%)] aspect-square">
+                              <img src={scan.previewUrl!} alt={scan.name} className="w-full h-full object-cover" />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                              <div className="absolute bottom-1.5 left-1.5 right-1.5">
+                                <p className="text-[9px] font-bold text-white truncate">{scan.name}</p>
+                                <span className="text-[8px] text-teal-400 bg-teal-500/20 px-1.5 py-0.5 rounded-full">{scan.modality}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        {state.scans.filter(s => !s.previewUrl).map((scan, i) => (
+                          <div key={i} className="flex items-center gap-3 p-2.5 rounded-xl bg-[hsl(222,47%,11%)] border border-[hsl(217,32%,18%)]">
+                            <div className="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+                              <FileText className="w-4 h-4 text-amber-400" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-medium text-white truncate">{scan.name}</p>
+                              <p className="text-[10px] text-slate-500">{scan.modality} · {(scan.size / 1024).toFixed(0)} KB</p>
+                            </div>
+                            <span className="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">DICOM</span>
+                          </div>
+                        ))}
+
+                        {/* Extracted data summary */}
+                        <div className="bg-[hsl(222,47%,11%)] rounded-xl p-3 border border-emerald-500/15 mt-2">
+                          <p className="text-[10px] font-semibold text-emerald-400 mb-2 flex items-center gap-1.5">
+                            <CheckCircle className="w-3 h-3" /> Data Extracted from Scans
+                          </p>
+                          <div className="grid grid-cols-2 gap-1.5">
+                            {[
+                              { label: "Bone Quality", val: `${a.boneQuality}/100` },
+                              { label: "Glenoid Version", val: `${a.glenoVersion}°` },
+                              { label: "Humeral Offset", val: `${a.humeralOffset} mm` },
+                              { label: "Cartilage Grade", val: `${a.cartilageCondition}/100` },
+                            ].map(m => (
+                              <div key={m.label} className="bg-[hsl(222,47%,7%)] rounded-lg p-2">
+                                <p className="text-[10px] font-mono font-bold text-teal-400">{m.val}</p>
+                                <p className="text-[9px] text-slate-600">{m.label}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
               <div className="grid lg:grid-cols-3 gap-5">
                 <div className="lg:col-span-2 space-y-5">
                   <div className="bg-[hsl(222,47%,8%)] border border-[hsl(217,32%,16%)] rounded-2xl p-5">
@@ -335,6 +425,7 @@ function ResultsDashboard() {
                     </div>
                   </div>
                 </div>
+              </div>
               </div>
             )}
 

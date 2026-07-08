@@ -280,13 +280,31 @@ function StepScans({ info, clinical, onNext, onBack }: { info: PatientInfo; clin
     if (!fileList) return;
     Array.from(fileList).forEach(file => {
       const modality = detectModality(file.name);
-      const sf: ScanFile = { name: file.name, type: file.type || "application/octet-stream", size: file.size, uploadedAt: new Date().toISOString(), modality };
       setUploading(file.name);
-      setTimeout(() => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
+        const isImage = file.type.startsWith("image/") || file.name.match(/\.(jpg|jpeg|png|gif|webp|bmp)$/i) !== null;
+        const sf: ScanFile = {
+          name: file.name,
+          type: file.type || "application/octet-stream",
+          size: file.size,
+          uploadedAt: new Date().toISOString(),
+          modality,
+          dataUrl,
+          previewUrl: isImage ? dataUrl : undefined,
+        };
         setUploading(null);
         setFiles(prev => [...prev.filter(f => f.name !== file.name), sf]);
         setShowQuestionnaire(true);
-      }, 1200 + Math.random() * 800);
+      };
+      reader.onerror = () => {
+        const sf: ScanFile = { name: file.name, type: file.type || "application/octet-stream", size: file.size, uploadedAt: new Date().toISOString(), modality };
+        setUploading(null);
+        setFiles(prev => [...prev.filter(f => f.name !== file.name), sf]);
+        setShowQuestionnaire(true);
+      };
+      reader.readAsDataURL(file);
     });
   }, []);
 
@@ -352,12 +370,19 @@ function StepScans({ info, clinical, onNext, onBack }: { info: PatientInfo; clin
             const cfg = MODALITY_CONFIG[f.modality];
             return (
               <div key={f.name} className={`flex items-center gap-3 p-3 rounded-xl border ${cfg.bg} ${cfg.border}`}>
-                <div className={`w-8 h-8 rounded-lg ${cfg.bg} border ${cfg.border} flex items-center justify-center shrink-0`}>
-                  <cfg.icon className={`w-4 h-4 ${cfg.color}`} />
-                </div>
+                {f.previewUrl ? (
+                  <div className="w-12 h-12 rounded-lg overflow-hidden border border-teal-500/30 shrink-0 bg-black">
+                    <img src={f.previewUrl} alt={f.name} className="w-full h-full object-cover opacity-90" />
+                  </div>
+                ) : (
+                  <div className={`w-12 h-12 rounded-lg ${cfg.bg} border ${cfg.border} flex items-center justify-center shrink-0`}>
+                    <cfg.icon className={`w-5 h-5 ${cfg.color}`} />
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-white truncate">{f.name}</p>
                   <p className="text-xs text-slate-400">{cfg.label} · {(f.size / 1024).toFixed(0)} KB</p>
+                  {f.dataUrl && <p className="text-[10px] text-emerald-500 mt-0.5">✓ Image data read — ready for AI analysis</p>}
                 </div>
                 <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
                 <button onClick={() => removeFile(f.name)} className="w-6 h-6 rounded-full hover:bg-red-500/20 flex items-center justify-center">

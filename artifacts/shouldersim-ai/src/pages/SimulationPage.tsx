@@ -1,11 +1,14 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 
+import { ShoulderAnatomyViewer } from "@/components/ShoulderAnatomyViewer";
+import type { AnalysisResult } from "@/contexts/PatientContext";
+
 class WebGLErrorBoundary extends React.Component<
-  { children: React.ReactNode },
+  { children: React.ReactNode; analysis?: AnalysisResult | null; scanImage?: string; scanModality?: string },
   { hasError: boolean }
 > {
-  constructor(props: { children: React.ReactNode }) {
+  constructor(props: { children: React.ReactNode; analysis?: AnalysisResult | null; scanImage?: string; scanModality?: string }) {
     super(props);
     this.state = { hasError: false };
   }
@@ -13,9 +16,14 @@ class WebGLErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-[#030712] text-slate-500">
-          <div className="w-8 h-8 rounded-full border border-slate-700 flex items-center justify-center text-xs">3D</div>
-          <span className="text-[10px]">3D view unavailable in this environment</span>
+        <div className="w-full h-full p-2">
+          <ShoulderAnatomyViewer
+            analysis={this.props.analysis}
+            scanImage={this.props.scanImage}
+            scanModality={this.props.scanModality}
+            className="w-full h-full"
+            height={420}
+          />
         </div>
       );
     }
@@ -789,6 +797,18 @@ function ShoulderSimViewer({
   const [sliceIndex, setSliceIndex] = useState(64);
   const [showReport, setShowReport] = useState(false);
 
+  const webglAvailable = useMemo(() => {
+    try {
+      const testCanvas = document.createElement("canvas");
+      return !!(
+        window.WebGLRenderingContext &&
+        (testCanvas.getContext("webgl") || testCanvas.getContext("experimental-webgl"))
+      );
+    } catch {
+      return false;
+    }
+  }, []);
+
   const angleDelta = Math.abs(planning.angle - 135) / 45;
   const anteDelta = Math.abs(planning.anteversion - 20) / 20;
   const stressLevel = Math.min((angleDelta + anteDelta) / 2, 1);
@@ -873,7 +893,7 @@ function ShoulderSimViewer({
               <span className="text-[9px] font-mono font-bold text-primary w-8">{sliceIndex}/128</span>
             </div>
           </div>
-        ) : (
+        ) : webglAvailable ? (
           <WebGLErrorBoundary>
           <Canvas camera={{ position: [0, 0.5, 3.2], fov: 45 }}>
             <color attach="background" args={["#030712"]} />
@@ -904,6 +924,14 @@ function ShoulderSimViewer({
             <OrbitControls enableZoom={true} enablePan={true} maxPolarAngle={Math.PI / 2 + 0.1} minDistance={1.5} maxDistance={6} />
           </Canvas>
           </WebGLErrorBoundary>
+        ) : (
+          <div className="w-full h-full bg-[#030712] p-2">
+            <ShoulderAnatomyViewer
+              showImplant={layers.has("implant")}
+              height={440}
+              className="w-full h-full"
+            />
+          </div>
         )}
 
         {/* Impingement detection warning badge overlay */}
