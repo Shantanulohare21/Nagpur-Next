@@ -1,0 +1,1 @@
+- [ShoulderSIM AI Platform](shouldersim-ai.md) — full end-to-end surgical planning platform; flow is Intake → ScanAnalysis → Simulation → Reports; patient state shared via PatientContext + localStorage.

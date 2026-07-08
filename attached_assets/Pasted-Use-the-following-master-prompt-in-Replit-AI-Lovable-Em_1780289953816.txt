@@ -1,0 +1,452 @@
+Use the following **master prompt** in Replit AI, Lovable, Emergent, Cursor, Bolt, or any AI website builder to transform your existing ShoulderSim website into a complete innovation-ready platform.
+
+---
+
+# MASTER PROMPT
+
+Transform the existing ShoulderSim website into a fully functional, modern, AI-powered orthopedic digital twin platform for shoulder implant simulation.
+
+Do not redesign from scratch. Improve and extend the existing application while preserving the current structure and working functionality.
+
+The platform should look like a medical-grade product used by orthopedic surgeons, hospitals, implant manufacturers, researchers, and medical students.
+
+---
+
+## Core Vision
+
+Build the world's first AI-powered Personalized Shoulder Outcome Prediction and Implant Simulation Platform.
+
+The system should not only visualize implants but also predict how a patient will move, recover, and perform after surgery using biomechanical simulation and AI.
+
+The website must feel like a combination of:
+
+* Medical Digital Twin Platform
+* AI Clinical Assistant
+* Biomechanical Simulation Lab
+* Surgical Planning Software
+* Implant Testing Sandbox
+
+---
+
+# UI/UX Requirements
+
+Create a premium healthcare SaaS interface.
+
+Requirements:
+
+* Modern dashboard design
+* Glassmorphism effects
+* Responsive layout
+* Smooth animations
+* Professional medical color palette
+* Dark mode and light mode
+* Mobile optimized
+* Loading skeletons
+* Progress indicators
+* Interactive charts
+* Real-time status updates
+
+The UI should look comparable to enterprise healthcare software.
+
+---
+
+# Module 1: AI Shoulder Scan Analysis
+
+Allow users to upload:
+
+* CT Scan images
+* MRI images
+* DICOM files
+* X-ray images
+
+Features:
+
+* Drag and drop upload
+* Scan validation
+* Image preview
+* AI analysis workflow
+* Progress tracking
+
+Display:
+
+* Bone structure detection
+* Rotator cuff assessment
+* Cartilage condition
+* Joint alignment analysis
+* Shoulder pathology detection
+
+Generate structured findings report.
+
+---
+
+# Module 2: 3D Shoulder Digital Twin
+
+Generate an interactive 3D shoulder model.
+
+Visualize:
+
+* Humerus
+* Scapula
+* Glenoid
+* Tendons
+* Muscles
+* Cartilage
+
+Features:
+
+* Rotate
+* Zoom
+* Pan
+* Section view
+* Transparency controls
+* Anatomical layer toggles
+
+Add realistic Three.js rendering.
+
+---
+
+# Module 3: Implant Simulation Sandbox
+
+Create a complete implant testing environment.
+
+Allow users to:
+
+* Select implant type
+* Upload custom implant models
+* Compare multiple implants
+* Change implant position
+* Adjust implant size
+
+Simulate:
+
+* Joint motion
+* Implant stability
+* Wear prediction
+* Impingement risk
+* Dislocation risk
+
+Display comparison charts.
+
+---
+
+# Module 4: Biomechanical Simulation Engine
+
+Create interactive simulation controls.
+
+Movement simulations:
+
+* Abduction
+* Adduction
+* Flexion
+* Extension
+* Internal Rotation
+* External Rotation
+
+Display:
+
+* Joint reaction forces
+* Muscle activation
+* Tendon loading
+* Stress distribution
+* Range of motion
+
+Provide real-time animation.
+
+---
+
+# Module 5: AI Implant Recommendation Engine
+
+Analyze:
+
+* Patient age
+* Bone density
+* Activity level
+* Anatomy measurements
+* Pathology findings
+
+Recommend:
+
+* Best implant type
+* Implant size
+* Implant position
+* Surgical approach
+
+Every recommendation must include explainable AI reasoning.
+
+Example:
+
+Recommended Implant: Reverse Shoulder Arthroplasty
+
+Reason:
+
+* Better stability
+* Lower stress concentration
+* Improved mobility prediction
+* Reduced impingement risk
+
+---
+
+# Module 6: Lifestyle-Aware Simulation (Unique Innovation)
+
+Allow patients to select activities:
+
+* Cricket
+* Tennis
+* Badminton
+* Swimming
+* Weightlifting
+* Gym exercises
+* Daily office work
+
+Simulate implant performance for each activity.
+
+Display:
+
+* Predicted stress
+* Mobility outcome
+* Implant lifespan
+* Injury risk
+
+This should become a flagship feature of the platform.
+
+---
+
+# Module 7: Post-Surgery Recovery Prediction
+
+Predict recovery timeline.
+
+Display:
+
+Week 2
+
+* Expected ROM
+* Pain reduction
+
+Week 6
+
+* Strength improvement
+* Functional recovery
+
+Month 3
+
+* Mobility score
+
+Month 6
+
+* Activity readiness
+
+Year 1
+
+* Long-term performance
+
+Show interactive timeline charts.
+
+---
+
+# Module 8: Surgical Risk Heatmap
+
+Generate color-coded anatomical maps.
+
+Display:
+
+Green:
+Safe zone
+
+Yellow:
+Moderate risk
+
+Red:
+High-risk region
+
+Highlight:
+
+* Excessive stress
+* Potential impingement
+* Weak bone regions
+* Implant collision zones
+
+---
+
+# Module 9: AI Second Opinion System
+
+After simulation:
+
+Generate AI review.
+
+Check:
+
+* Implant placement
+* Alignment
+* Stability
+* Mobility prediction
+* Failure risk
+
+Provide recommendations for improvement.
+
+Example:
+
+Potential impingement detected.
+
+Suggested correction:
+Move implant superiorly by 2 mm.
+
+---
+
+# Module 10: Implant Marketplace
+
+Create a dedicated section.
+
+Allow implant manufacturers to:
+
+* Upload implant models
+* View performance metrics
+* Compare against competitors
+* Analyze simulation reports
+
+Include searchable implant library.
+
+---
+
+# Module 11: Surgeon Training Simulator
+
+Create an educational mode.
+
+Features:
+
+* Virtual surgery walkthrough
+* Surgical planning tutorials
+* Interactive case studies
+* Simulation replay
+* Assessment system
+
+Useful for residents and students.
+
+---
+
+# Module 12: AR/VR Readiness
+
+Prepare architecture for future integration.
+
+Create:
+
+* AR visualization placeholders
+* VR simulation mode UI
+* Mixed reality surgery planning workflow
+
+Display future-ready functionality.
+
+---
+
+# Module 13: Clinical Analytics Dashboard
+
+Provide advanced analytics.
+
+Display:
+
+* Implant success probability
+* Failure risk
+* Stability score
+* Recovery score
+* Predicted mobility
+* Surgeon confidence score
+
+Use modern charts and visualizations.
+
+---
+
+# Module 14: Patient Communication Mode
+
+Generate patient-friendly explanations.
+
+Convert medical data into simple language.
+
+Show:
+
+Current Condition
+→ Proposed Surgery
+→ Recovery Journey
+→ Expected Outcomes
+
+Include simple animations.
+
+---
+
+# Module 15: Report Generation
+
+Generate downloadable:
+
+* PDF reports
+* Surgical planning reports
+* Implant comparison reports
+* Recovery prediction reports
+
+Include:
+
+* 3D images
+* Charts
+* Recommendations
+* Risk analysis
+
+---
+
+# Technical Requirements
+
+Frontend:
+
+* React
+* TypeScript
+* Tailwind CSS
+* Three.js
+* Framer Motion
+* Recharts
+
+Backend:
+
+* Flask or FastAPI
+
+AI Layer:
+
+* PyTorch
+* TensorFlow
+* MONAI
+
+Database:
+
+* PostgreSQL
+* Firebase
+
+File Handling:
+
+* DICOM support
+* Image upload support
+
+---
+
+# Performance Requirements
+
+* No broken pages
+* No placeholder buttons
+* No dummy navigation
+* All modules connected properly
+* Smooth transitions
+* Fast loading
+* Mobile responsive
+* Error handling everywhere
+* Clean code architecture
+* Production-ready UI
+
+---
+
+# Social Impact Section
+
+Add a dedicated impact dashboard showing how the platform helps:
+
+* Reduce implant failures
+* Reduce revision surgeries
+* Improve surgical planning
+* Improve patient recovery
+* Lower healthcare costs
+* Improve access to orthopedic expertise in rural areas
+* Support medical education and surgeon training
+
+The final website should feel like a real-world healthcare innovation platform that could be presented to orthopedic surgeons, hospitals, implant manufacturers, investors, and innovation competition judges. It must be functional, visually impressive, medically relevant, and demonstrate clear societal impact.

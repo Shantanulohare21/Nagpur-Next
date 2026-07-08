@@ -1,0 +1,51 @@
+Upgrade the existing “ShoulderSim AI” website into a complete futuristic orthopedic surgical planning and biomechanical simulation platform without changing the current UI structure, branding, theme, layout, navigation, or design consistency. Keep the current premium medical-tech aesthetic and enhance it with advanced interactive features and intelligent workflows.
+
+Add the following advanced features across the existing website:
+
+* Fully interactive 3D shoulder anatomy viewer using Three.js/React Three Fiber
+* Rotatable and zoomable shoulder model with bones, muscles, tendons, cartilage, and implant layers
+* Real-time stress heatmaps (red/yellow/green) during shoulder movement simulation
+* Dynamic motion simulation animations for flexion, extension, abduction, and rotation
+* Live biomechanical simulation updates when implant angle/position changes
+* Surgical Planning Mode where surgeons can drag, rotate, resize, and reposition implants interactively
+* AI-powered recommendation assistant that explains implant choices, contraindications, risks, and predicted outcomes in simple clinical language
+* Complication prediction engine showing dislocation risk, implant loosening, revision probability, infection risk, scapular notching, and long-term wear analysis
+* Post-operative recovery prediction timeline with mobility milestones, pain reduction, rehabilitation progress, and recovery graphs
+* Save & Compare dashboard allowing multiple patient simulations to be stored and compared side-by-side
+* Expandable comparison tables for ROM, stress distribution, wear, implant score, revision risk, and recovery outcomes
+* PDF surgical report export including charts, implant recommendations, risk analysis, and simulation summary
+* DICOM/CT/MRI upload support with scan preview and AI-based anatomical reconstruction workflow
+* Implant marketplace/library with filters by diagnosis, bone quality, implant type, material, geometry, and compatibility score
+* AR/VR surgical visualization sections and immersive surgery training simulation previews
+* Explainable AI panels that clearly describe why recommendations were made
+* Patient-specific digital twin visualization concept section
+* Research analytics dashboard with charts and outcome statistics
+* Surgeon collaboration/workspace interface with notes and shared planning
+* Voice-command simulation assistant UI concept
+* Implant failure replay simulation showing stress concentration and collision zones
+
+UI/UX Requirements:
+
+* Keep the current design system exactly consistent
+* Do not redesign existing pages completely
+* Enhance the current website professionally
+* Use glassmorphism, futuristic medical visuals, smooth transitions, and advanced animations
+* Add premium dashboards and interactive cards
+* Use responsive layouts optimized for desktop, tablet, and mobile
+* Add high-quality medical-tech illustrations and simulation visuals
+* Maintain realistic and professional orthopedic workflow feel
+* Make the platform look enterprise-grade and suitable for surgeons, researchers, and implant manufacturers
+
+Technical Requirements:
+
+* React + Tailwind CSS
+* Framer Motion animations
+* Three.js / React Three Fiber for 3D
+* Chart.js or Recharts for analytics
+* Modular reusable components
+* Clean scalable architecture
+* Mock biomechanical calculations with realistic dynamic behavior
+* Persistent local storage/database-ready structure for saved simulations
+* Production-ready frontend experience
+
+Do not make it look like a generic hospital website. Make it feel like a real AI-powered orthopedic surgical simulation and implant intelligence platform used in advanced medical research labs and hospitals.

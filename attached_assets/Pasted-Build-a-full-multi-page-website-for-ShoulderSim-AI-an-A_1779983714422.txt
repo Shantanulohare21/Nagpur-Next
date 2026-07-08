@@ -1,0 +1,25 @@
+Build a full multi-page website for "ShoulderSim AI" — an AI-powered biomechanical simulation platform for the human shoulder, used by surgeons and implant manufacturers to virtually test implants before actual surgery.
+Pages to build:
+
+Home — Hero section with an animated shoulder scan visualization, a headline explaining the platform, key stats (prediction accuracy, simulation speed, number of cases trained on), a grid of the 5 core platform modules, a step-by-step workflow showing how a surgeon goes from scan upload to surgical plan, and a call-to-action to request a demo
+Platform — Detailed explanation of each of the 5 modules: 3D Shoulder Digitization, Biomechanical Simulation Engine, AI/ML Prediction Layer, Implant Testing Sandbox, and Surgical Planning Interface — each with its own section, feature list, and visual
+Simulation Demo — An interactive sandbox UI where the user can: upload a CT/MRI file (mock), select an implant from a dropdown library, click "Run Simulation", then see a results panel showing confidence scores for each implant as bar charts, a stress distribution visual, range-of-motion output, and an AI recommendation card with the best implant, size, and surgical approach
+Implant Library — A filterable and searchable grid of implant cards. Filter options: implant type (total shoulder, reverse shoulder, partial), manufacturer, size range. Each card shows implant name, type, compatibility score badge, and a "Test in Simulator" button
+For Surgeons — A use-case focused page explaining how surgeons use the platform for pre-operative planning, training simulation, and AR/VR-assisted visualization. Include a case study section with example patient outcomes
+For Manufacturers — A use-case focused page for implant companies explaining how they can use the virtual testing sandbox, run wear and tear simulations, do impingement testing, and generate regulatory documentation from simulation results
+Pricing — Three pricing tiers: Hospital (per seat license), Manufacturer (enterprise), Research/Academic. Include a feature comparison table across all three tiers and a FAQ section below
+Contact / Demo Request — A form page with fields for: Full Name, Role (Surgeon / Implant Manufacturer / Researcher / Hospital Admin), Organization name, Country, and a text area describing their use case. Include a confirmation message after submission
+
+Components to include across the site:
+
+Sticky navigation bar with logo, page links, and a "Request Demo" button
+A status bar under the nav showing mock live data like active simulations, AI model version, and queued implant tests
+A patient case viewer widget showing scan ID, implant confidence scores, and the AI's final recommendation
+Animated bar charts comparing implant options (A vs B vs C) with a highlighted winner
+A 5-step connected node workflow diagram (Upload Scan → AI Segmentation → Select Implant → Run Simulation → AI Report)
+Module cards with a number, icon, title, short description, and feature tags
+Metric/stat cards showing a large number, a unit label, and a description
+Testimonial or case study cards from surgeons and manufacturers
+A footer with navigation links, contact info, and a medical disclaimer: "For surgical planning use only — not a substitute for clinical judgment"
+
+Tech stack: React and Tailwind CSS. Use Lucide icons throughout. All data is mocked and static — no backend required. Make the site fully responsive for desktop and tablet.

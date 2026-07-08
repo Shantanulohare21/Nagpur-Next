@@ -1,0 +1,331 @@
+# ShoulderSim AI – Complete Feature Audit & Enhancement Prompt
+
+Analyze the existing ShoulderSim website thoroughly and compare it against the following problem statement requirements. Do not rebuild the application from scratch. Instead, identify all missing, incomplete, non-functional, placeholder, or partially implemented features and integrate them seamlessly into the existing platform.
+
+## Objective
+
+Transform the existing website into a complete AI-powered biomechanical shoulder simulation platform capable of helping orthopedic surgeons, implant manufacturers, researchers, and medical students virtually evaluate implant performance before surgery.
+
+The final platform should be production-ready, fully functional, medically focused, visually impressive, and innovation-driven.
+
+---
+
+# PHASE 1: COMPLETE WEBSITE AUDIT
+
+Perform a full audit of:
+
+* UI/UX
+* Navigation
+* Responsiveness
+* Backend functionality
+* API integrations
+* Simulation modules
+* AI modules
+* Authentication
+* Data flow
+* Report generation
+* Upload systems
+
+Generate a checklist showing:
+
+✅ Implemented Features
+
+⚠️ Partially Implemented Features
+
+❌ Missing Features
+
+Then automatically implement all missing features.
+
+---
+
+# PHASE 2: 3D SHOULDER DIGITIZATION MODULE
+
+If missing, create a complete 3D Shoulder Reconstruction Module.
+
+Requirements:
+
+### Medical Image Upload
+
+Support:
+
+* CT Scans
+* MRI Scans
+* DICOM Files
+* X-Ray Images
+
+### Anatomical Reconstruction
+
+Create interactive visualization of:
+
+* Humerus
+* Scapula
+* Glenoid
+* Cartilage
+* Tendons
+* Rotator Cuff Muscles
+
+### Features
+
+* Rotate
+* Zoom
+* Pan
+* Transparency Controls
+* Layer Visibility Toggle
+* Section View
+
+Create realistic Three.js rendering.
+
+---
+
+# PHASE 3: BIOMECHANICAL SIMULATION ENGINE
+
+If not implemented, build a simulation engine that visualizes:
+
+### Range of Motion
+
+* Abduction
+* Adduction
+* Flexion
+* Extension
+* Internal Rotation
+* External Rotation
+
+### Simulation Outputs
+
+* Stress Distribution
+* Strain Analysis
+* Joint Load Prediction
+* Muscle Force Estimation
+* Implant Stability Analysis
+
+Display interactive animations and graphs.
+
+---
+
+# PHASE 4: AI/ML DECISION ENGINE
+
+Implement an explainable AI layer.
+
+Input Parameters:
+
+* Age
+* Bone Density
+* Activity Level
+* Shoulder Anatomy
+* Implant Type
+
+Generate:
+
+* Implant Success Probability
+* Implant Failure Risk
+* Mobility Prediction
+* Recovery Prediction
+* Implant Size Recommendation
+* Implant Position Recommendation
+
+Every recommendation must include a detailed explanation.
+
+Example:
+
+Recommended Implant Position
+
+Reason:
+
+* Reduced Glenoid Stress
+* Improved Stability
+* Better Post-Operative Mobility
+* Lower Dislocation Risk
+
+---
+
+# PHASE 5: IMPLANT TESTING SANDBOX
+
+Create a virtual implant testing laboratory.
+
+Allow users to:
+
+* Select implant models
+* Upload implant geometry files
+* Compare multiple implants
+
+Simulate:
+
+* Wear and Tear
+* Stress Distribution
+* Implant Collision
+* Impingement Detection
+* Stability Testing
+
+Generate side-by-side comparison dashboards.
+
+---
+
+# PHASE 6: SURGICAL PLANNING INTERFACE
+
+Build a professional surgical planning environment.
+
+Features:
+
+* Pre-operative Planning
+* Implant Placement Assistant
+* Alignment Visualization
+* Bone Resection Planning
+* Surgical Outcome Prediction
+
+Provide an intuitive workflow used by orthopedic surgeons.
+
+---
+
+# PHASE 7: UNIQUE INNOVATION FEATURES
+
+Implement features that differentiate ShoulderSim from existing orthopedic software.
+
+## Lifestyle-Based Implant Simulation
+
+Allow simulation for:
+
+* Cricket
+* Tennis
+* Badminton
+* Swimming
+* Weightlifting
+* Daily Activities
+
+Predict:
+
+* Implant Lifespan
+* Mobility Impact
+* Activity-Specific Stress
+
+---
+
+## Recovery Timeline Predictor
+
+Display expected recovery milestones:
+
+* Week 2
+* Week 6
+* Month 3
+* Month 6
+* Year 1
+
+Show:
+
+* Range of Motion
+* Strength Recovery
+* Pain Reduction
+* Functional Recovery
+
+---
+
+## AI Second Opinion System
+
+After simulation, automatically review the surgeon's plan.
+
+Detect:
+
+* Misalignment
+* Collision Risk
+* High Stress Zones
+* Poor Implant Placement
+
+Provide improvement suggestions.
+
+---
+
+# PHASE 8: ADVANCED VISUALIZATION
+
+Create:
+
+### Stress Heatmaps
+
+Colors:
+
+Green = Safe
+
+Yellow = Moderate Stress
+
+Red = High Stress
+
+### Risk Heatmaps
+
+Display:
+
+* Implant Failure Risk
+* Bone Weakness
+* Collision Zones
+
+### Interactive Charts
+
+* Recovery Trends
+* Mobility Prediction
+* Implant Performance
+* Risk Scores
+
+---
+
+# PHASE 9: SURGEON TRAINING MODE
+
+Build an educational simulator.
+
+Include:
+
+* Virtual Cases
+* Procedure Walkthroughs
+* Surgical Replay
+* Learning Modules
+* Assessment Dashboard
+
+---
+
+# PHASE 10: AR/VR READINESS
+
+Create architecture and UI support for:
+
+* AR Surgical Planning
+* VR Anatomy Exploration
+* Mixed Reality Implant Visualization
+
+Provide future integration points.
+
+---
+
+# PHASE 11: REPORT GENERATION
+
+Generate downloadable:
+
+* PDF Reports
+* Implant Analysis Reports
+* Surgical Planning Reports
+* Recovery Prediction Reports
+
+Include:
+
+* Images
+* Charts
+* Recommendations
+* Risk Assessments
+
+---
+
+# PHASE 12: PERFORMANCE & QUALITY CHECK
+
+Verify that:
+
+* No broken buttons exist
+* No dummy pages exist
+* No placeholder components remain
+* Navigation works correctly
+* Mobile responsiveness is complete
+* Error handling is implemented
+* Upload functionality works
+* Charts render correctly
+* Simulations run smoothly
+
+---
+
+# FINAL GOAL
+
+The finished platform should feel like a real-world orthopedic digital twin system that helps surgeons virtually test implants, optimize surgical planning, predict outcomes, reduce implant failures, improve patient recovery, and support medical education.
+
+The application should demonstrate clear healthcare innovation, strong societal impact, and be suitable for presentation to hospitals, orthopedic surgeons, implant manufacturers, investors, research institutions, and innovation competition judges.

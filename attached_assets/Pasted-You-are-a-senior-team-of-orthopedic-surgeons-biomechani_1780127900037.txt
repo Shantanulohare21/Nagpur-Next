@@ -1,0 +1,318 @@
+You are a senior team of orthopedic surgeons, biomechanical engineers, AI researchers, medical imaging experts, UI/UX designers, and healthcare software architects.
+
+Perform a COMPLETE AUDIT of the existing ShoulderSim AI codebase and website.
+
+DO NOT redesign or remove existing features unless necessary. First analyze every page, component, API, database schema, simulation engine, AI module, dashboard, upload workflow, and visualization system.
+
+Your task:
+
+1. Identify all existing features already implemented.
+2. Identify incomplete, mock, placeholder, demo, or non-functional features.
+3. Identify missing features from the problem statement.
+4. Automatically implement all missing features.
+5. Upgrade all existing features to production-grade quality.
+6. Ensure all features are fully connected with real workflows and data flow.
+
+The final platform must become a complete AI-powered biomechanical shoulder simulation ecosystem.
+
+====================================
+CORE WORKFLOW
+=============
+
+Patient Uploads:
+→ CT Scan
+→ MRI Scan
+→ DICOM Files
+→ Medical Reports (PDF)
+
+AI Processing:
+→ Anatomical Segmentation
+→ Bone Detection
+→ Cartilage Detection
+→ Tendon Detection
+→ Ligament Detection
+→ Muscle Mapping
+→ Rotator Cuff Detection
+→ Pathology Detection
+
+Digital Twin Creation:
+→ Patient-Specific 3D Shoulder Reconstruction
+→ Dynamic Anatomical Modeling
+→ Personalized Biomechanical Properties
+
+Simulation:
+→ Range of Motion Analysis
+→ Joint Load Analysis
+→ Muscle Force Simulation
+→ Stress Distribution
+→ Strain Analysis
+→ Contact Pressure Analysis
+→ Tissue Deformation
+→ Collision Detection
+→ Impingement Testing
+→ Stability Testing
+
+AI Layer:
+→ Implant Success Prediction
+→ Failure Prediction
+→ Revision Surgery Prediction
+→ Complication Prediction
+→ Recovery Prediction
+→ Mobility Prediction
+→ Risk Scoring
+→ Confidence Scores
+→ Explainable AI Results
+
+Implant Sandbox:
+→ Implant Library
+→ Implant Size Selection
+→ Implant Position Optimization
+→ Implant Geometry Comparison
+→ Wear Analysis
+→ Longevity Prediction
+→ Material Comparison
+→ Performance Ranking
+
+Surgical Planning:
+→ Bone Cut Planning
+→ Screw Placement Planning
+→ Implant Placement Planning
+→ Surgical Route Planning
+→ Personalized Surgical Guides
+
+Post-Operative Prediction:
+→ ROM Forecast
+→ Recovery Timeline
+→ Pain Prediction
+→ Implant Longevity
+→ Complication Forecast
+
+====================================
+3D VISUALIZATION
+================
+
+Implement a highly realistic medical-grade 3D visualization engine.
+
+Features:
+
+* Interactive 3D Shoulder
+* Exploded Anatomy View
+* Layer Controls
+* Bone Visualization
+* Muscle Visualization
+* Tendon Visualization
+* Implant Visualization
+* Heatmaps
+* Stress Maps
+* Force Vectors
+* Motion Playback
+* Real-Time Simulation Playback
+
+Add:
+
+* Three.js
+* WebGL
+* WebGPU support
+* High-performance rendering
+
+====================================
+AR / VR MODULE
+==============
+
+Add complete AR/VR support.
+
+AR:
+
+* Implant Overlay
+* Anatomy Overlay
+* Mobile AR Viewer
+* Real World Shoulder Placement
+
+VR:
+
+* Surgical Rehearsal
+* Virtual Operating Room
+* Procedure Training
+* Implant Position Training
+* Medical Education Simulator
+
+Use:
+
+* WebXR
+* Three.js
+* Babylon.js compatibility
+
+====================================
+SURGEON DASHBOARD
+=================
+
+Create a professional surgeon workspace.
+
+Features:
+
+* Patient Management
+* Case Management
+* Surgical Planning
+* Simulation History
+* Implant Comparison
+* Risk Assessment
+* Outcome Prediction
+* AI Recommendations
+* Team Collaboration
+
+====================================
+AI COPILOT
+==========
+
+Create a conversational medical AI assistant.
+
+Capabilities:
+
+* Explain Scan Findings
+* Explain Risks
+* Recommend Implant Sizes
+* Recommend Surgical Plans
+* Explain Simulations
+* Generate Clinical Insights
+* Generate Surgical Reports
+
+====================================
+REPORTING ENGINE
+================
+
+Generate exportable reports.
+
+Include:
+
+* Patient Summary
+* Scan Findings
+* Anatomical Measurements
+* Implant Recommendation
+* Surgical Plan
+* Risk Analysis
+* Recovery Forecast
+* Simulation Results
+
+Export:
+
+* PDF
+* Excel
+* JSON
+* DICOM SR
+
+====================================
+SECURITY & COMPLIANCE
+=====================
+
+Implement:
+
+* HIPAA Ready Architecture
+* GDPR Ready Architecture
+* End-to-End Encryption
+* Role-Based Access Control
+* Audit Logs
+* MFA Authentication
+* Secure Medical Data Storage
+
+====================================
+ENTERPRISE FEATURES
+===================
+
+Support:
+
+* Hospitals
+* Surgeons
+* Implant Manufacturers
+* Researchers
+* Medical Universities
+
+Add:
+
+* Multi-Tenant Architecture
+* Organization Management
+* API Access
+* Analytics Dashboard
+* Research Dataset Export
+
+====================================
+UI/UX REQUIREMENTS
+==================
+
+The platform must look like a real healthcare product created by a professional medical software company.
+
+Design Requirements:
+
+* Modern Medical Theme
+* Premium Enterprise UI
+* Glassmorphism + Clean Layout
+* Responsive Design
+* Professional Color System
+* Advanced Charts
+* Interactive Analytics
+* Realistic Medical Graphics
+* No AI-generated appearance
+* No placeholder content
+* No dummy data
+
+====================================
+TECHNICAL REQUIREMENTS
+======================
+
+Frontend:
+
+* React
+* Next.js
+* TypeScript
+* TailwindCSS
+* Three.js
+
+Backend:
+
+* FastAPI
+* Python
+
+AI:
+
+* PyTorch
+* TensorFlow
+* MONAI
+* OpenCV
+
+Medical Imaging:
+
+* DICOM Support
+* ITK
+* VTK
+* 3D Reconstruction Pipeline
+
+Simulation:
+
+* OpenSim Integration
+* SOFA Framework Integration
+* Physics-Based Modeling
+
+Deployment:
+
+* Docker
+* Kubernetes
+* AWS/Azure Ready
+
+====================================
+FINAL AUDIT REPORT
+==================
+
+After analysis provide:
+
+1. Existing Features Found
+2. Missing Features
+3. Improvements Applied
+4. Production Readiness Score
+5. Medical Simulation Readiness Score
+6. AI Readiness Score
+7. Security Readiness Score
+8. Performance Score
+9. Final Gap Analysis
+10. Remaining Recommendations
+
+Do not stop until every missing feature is implemented or clearly documented.
+The final result should be a production-ready orthopedic digital twin and shoulder simulation platform suitable for hospitals, surgeons, implant manufacturers, medical researchers, and healthcare institutions.
