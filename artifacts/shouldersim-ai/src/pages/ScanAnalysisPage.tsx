@@ -126,6 +126,7 @@ function ResultsDashboard() {
   const { state, setAnalysis, markStep } = usePatient();
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState("overview");
+  const [aiStatus, setAiStatus] = useState<"idle" | "loading" | "enhanced" | "no_key" | "error">("idle");
 
   useEffect(() => {
     if (state.info && state.clinical && !state.analysis) {
@@ -134,6 +135,56 @@ function ResultsDashboard() {
       markStep("analysis");
     }
   }, []);
+
+  useEffect(() => {
+    if (aiStatus !== "idle") return;
+    const scanWithImage = state.scans.find(s => s.dataUrl);
+    if (!scanWithImage?.dataUrl || !state.analysis) return;
+
+    setAiStatus("loading");
+    fetch("/api/scan/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        imageDataUrl: scanWithImage.dataUrl,
+        modality: scanWithImage.modality,
+        patientAge: state.info?.age,
+        patientSex: state.info?.sex,
+        diagnosis: state.clinical?.diagnosis,
+      }),
+    })
+      .then(r => r.json())
+      .then((data: { success: boolean; reason?: string; data?: Record<string, unknown> }) => {
+        if (data.success && data.data) {
+          const ai = data.data;
+          const cur = state.analysis!;
+          setAnalysis({
+            ...cur,
+            ...(typeof ai.boneQuality === "number" ? { boneQuality: ai.boneQuality } : {}),
+            ...(typeof ai.rotatorCuffIntegrity === "number" ? { rotatorCuffIntegrity: ai.rotatorCuffIntegrity } : {}),
+            ...(typeof ai.cartilageCondition === "number" ? { cartilageCondition: ai.cartilageCondition } : {}),
+            ...(typeof ai.jointAlignment === "number" ? { jointAlignment: ai.jointAlignment } : {}),
+            ...(typeof ai.glenoVersion === "number" ? { glenoVersion: ai.glenoVersion } : {}),
+            ...(typeof ai.humeralOffset === "number" ? { humeralOffset: ai.humeralOffset } : {}),
+            ...(typeof ai.aiScore === "number" ? { aiScore: ai.aiScore } : {}),
+            ...(typeof ai.successRate === "number" ? { successRate: ai.successRate } : {}),
+            ...(typeof ai.revisionRisk === "number" ? { revisionRisk: ai.revisionRisk } : {}),
+            ...(typeof ai.romPredicted === "number" ? { romPredicted: ai.romPredicted } : {}),
+            ...(typeof ai.riskLevel === "string" ? { riskLevel: ai.riskLevel as "Low" | "Moderate" | "High" } : {}),
+            ...(typeof ai.recommendedImplant === "string" ? { recommendedImplant: ai.recommendedImplant } : {}),
+            ...(typeof ai.implantSize === "string" ? { implantSize: ai.implantSize } : {}),
+            ...(Array.isArray(ai.findings) ? { findings: ai.findings as string[] } : {}),
+            ...(Array.isArray(ai.pathologies) ? { pathologies: ai.pathologies as typeof cur.pathologies } : {}),
+          });
+          setAiStatus("enhanced");
+        } else if (data.reason === "no_api_key") {
+          setAiStatus("no_key");
+        } else {
+          setAiStatus("error");
+        }
+      })
+      .catch(() => setAiStatus("error"));
+  }, [state.analysis]);
 
   const a = state.analysis || generateAnalysis(state.info!, state.clinical!);
   const p = state.info!;
@@ -200,7 +251,24 @@ function ResultsDashboard() {
                   <User className="w-6 h-6 text-teal-400" />
                 </div>
                 <div className="flex-1">
-                  <h1 className="text-xl font-bold text-white">{p.name}</h1>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h1 className="text-xl font-bold text-white">{p.name}</h1>
+                    {aiStatus === "loading" && (
+                      <span className="flex items-center gap-1 px-2 py-0.5 bg-teal-500/10 border border-teal-500/20 rounded-full text-[10px] text-teal-400">
+                        <div className="w-2 h-2 border border-teal-400 border-t-transparent rounded-full animate-spin" /> AI Vision Analyzing…
+                      </span>
+                    )}
+                    {aiStatus === "enhanced" && (
+                      <span className="flex items-center gap-1 px-2 py-0.5 bg-emerald-500/15 border border-emerald-500/30 rounded-full text-[10px] text-emerald-400 font-semibold">
+                        <CheckCircle className="w-3 h-3" /> AI Vision Enhanced
+                      </span>
+                    )}
+                    {aiStatus === "no_key" && (
+                      <span className="flex items-center gap-1 px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded-full text-[10px] text-amber-400">
+                        <Brain className="w-3 h-3" /> Biomechanical Model (set ANTHROPIC_API_KEY for AI Vision)
+                      </span>
+                    )}
+                  </div>
                   <p className="text-sm text-slate-400">{p.age}{p.sex} · MRN {p.mrn} · {c.affectedSide} Shoulder · {c.diagnosis}</p>
                 </div>
                 <div className={`px-3 py-1.5 rounded-full text-xs font-bold border ${a.riskLevel === "Low" ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-400" : a.riskLevel === "Moderate" ? "bg-amber-500/15 border-amber-500/30 text-amber-400" : "bg-red-500/15 border-red-500/30 text-red-400"}`}>
