@@ -1,0 +1,52 @@
+# docker-compose version omitted (Compose v2 syntax) 
+
+services:
+  backend:
+    build:
+      context: ./backend
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    environment:
+      - UPLOAD_DIR=/data/uploads
+      - DATABASE_URL=postgresql+psycopg2://postgres:example@db:5432/shoulder
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    ports:
+      - "5003:5003"
+    volumes:
+      - uploads_data:/data/uploads
+      - meshes_data:/data/meshes
+      - models_data:/app/models
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:16-alpine
+    container_name: shoulder_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: shoulder
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: shoulder_redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:
+  uploads_data:
+  meshes_data:
+  models_data:

@@ -1,0 +1,36 @@
+# Docker Compose version removed (obsolete)
+
+services:
+  backend:
+    build:
+      context: ./artifacts/backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: shoulder_user
+      POSTGRES_PASSWORD: shoulder_pass
+      POSTGRES_DB: shoulder_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+volumes:
+  db_data:
