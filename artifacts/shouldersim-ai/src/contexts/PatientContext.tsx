@@ -60,6 +60,7 @@ export interface AnalysisResult {
   engineVersion?: string;
   dataSources?: { key: string; name: string; n: number; year: number }[];
   totalEvidenceN?: number;
+  meshUrl?: string;
 }
 
 export interface PatientState {

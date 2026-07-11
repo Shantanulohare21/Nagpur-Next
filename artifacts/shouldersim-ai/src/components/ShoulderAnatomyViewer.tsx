@@ -1,6 +1,8 @@
 import React, { useRef, useEffect, useCallback, useState } from "react";
 import type { AnalysisResult } from "@/contexts/PatientContext";
-import { RotateCw, Layers, Ruler, Eye, ZoomIn, ZoomOut } from "lucide-react";
+import { RotateCw, Layers, Ruler, Eye, ZoomIn, ZoomOut, Box as BoxIcon } from "lucide-react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, Environment, Sphere, Cylinder, Box, ContactShadows } from "@react-three/drei";
 
 interface ShoulderAnatomyViewerProps {
   analysis?: AnalysisResult | null;
@@ -11,7 +13,7 @@ interface ShoulderAnatomyViewerProps {
   height?: number;
 }
 
-type ViewMode = "ap" | "axial" | "lateral" | "scan";
+type ViewMode = "ap" | "axial" | "lateral" | "scan" | "3d";
 
 function drawAPView(
   ctx: CanvasRenderingContext2D,
@@ -584,6 +586,81 @@ function drawLateralView(
   ctx.fillText("LATERAL VIEW", u * 0.15, h - u * 0.15);
 }
 
+function MockShoulderMesh({ glenoVersion, boneQuality, implant, showImplant }: { glenoVersion: number, boneQuality: number, implant: string, showImplant: boolean }) {
+  const boneColor = boneQuality > 0.8 ? "#e2e8f0" : "#cbd5e1"; // Healthy vs osteopenic
+  const isRSA = implant.toLowerCase().includes("reverse");
+  const isTSA = implant.toLowerCase().includes("total") || implant.toLowerCase().includes("tsa");
+  const isHemi = implant.toLowerCase().includes("hemi");
+  const hasImplant = showImplant && (isRSA || isTSA || isHemi);
+
+  return (
+    <group position={[0, -0.5, 0]}>
+      {/* Humeral Shaft */}
+      <Cylinder args={[0.5, 0.4, 4, 32]} position={[1.5, -2, 0]} rotation={[0, 0, 0.2]}>
+        <meshStandardMaterial color={boneColor} roughness={0.7} />
+      </Cylinder>
+      
+      {/* Humeral Head */}
+      {(!hasImplant || (!isTSA && !isRSA && !isHemi)) && (
+        <Sphere args={[0.8, 32, 32]} position={[1.1, 0.2, 0]}>
+          <meshStandardMaterial color={boneColor} roughness={0.5} />
+        </Sphere>
+      )}
+
+      {/* Scapula/Glenoid Neck */}
+      <Box args={[1.5, 1.2, 1.8]} position={[-1, 0, 0]} rotation={[0, glenoVersion * Math.PI / 180, 0]}>
+        <meshStandardMaterial color={boneColor} roughness={0.8} />
+      </Box>
+      {/* Scapula Body */}
+      <Box args={[2.5, 2.5, 0.4]} position={[-2.5, -0.5, -0.5]} rotation={[0, glenoVersion * Math.PI / 180, 0]}>
+        <meshStandardMaterial color={boneColor} roughness={0.8} />
+      </Box>
+
+      {/* Glenoid Socket */}
+      {(!hasImplant || (!isTSA && !isRSA)) && (
+        <Cylinder args={[0.7, 0.7, 0.2, 32]} position={[-0.2, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <meshStandardMaterial color="#94a3b8" roughness={0.9} />
+        </Cylinder>
+      )}
+
+      {/* IMPLANTS */}
+      {hasImplant && isTSA && (
+        <group>
+          {/* Glenoid Component (Poly) */}
+          <Cylinder args={[0.7, 0.7, 0.2, 32]} position={[-0.2, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+            <meshStandardMaterial color="#ffffff" roughness={0.2} transmission={0.9} thickness={0.5} opacity={0.8} transparent />
+          </Cylinder>
+          {/* Humeral Head Component (Metal) */}
+          <Sphere args={[0.78, 32, 32]} position={[0.7, 0.2, 0]} rotation={[0, 0, 0]}>
+            <meshStandardMaterial color="#a5f3fc" metalness={0.9} roughness={0.1} />
+          </Sphere>
+          {/* Humeral Stem */}
+          <Cylinder args={[0.2, 0.1, 2, 32]} position={[1.3, -1, 0]} rotation={[0, 0, 0.2]}>
+            <meshStandardMaterial color="#a5f3fc" metalness={0.9} roughness={0.2} />
+          </Cylinder>
+        </group>
+      )}
+
+      {hasImplant && isRSA && (
+        <group>
+          {/* Glenosphere (Metal ball on glenoid) */}
+          <Sphere args={[0.6, 32, 32]} position={[-0.1, 0, 0]}>
+            <meshStandardMaterial color="#a5f3fc" metalness={0.9} roughness={0.1} />
+          </Sphere>
+          {/* Humeral Cup (Poly socket on humerus) */}
+          <Cylinder args={[0.65, 0.65, 0.3, 32]} position={[0.6, 0.1, 0]} rotation={[0, 0, Math.PI / 2]}>
+            <meshStandardMaterial color="#ffffff" roughness={0.2} />
+          </Cylinder>
+          {/* Humeral Stem */}
+          <Cylinder args={[0.2, 0.1, 2, 32]} position={[1.2, -1.2, 0]} rotation={[0, 0, 0.2]}>
+            <meshStandardMaterial color="#a5f3fc" metalness={0.9} roughness={0.2} />
+          </Cylinder>
+        </group>
+      )}
+    </group>
+  );
+}
+
 export function ShoulderAnatomyViewer({
   analysis,
   scanImage,
@@ -710,12 +787,20 @@ export function ShoulderAnatomyViewer({
     { id: "axial", label: "Axial CT" },
     { id: "lateral", label: "Lateral" },
     ...(scanImage ? [{ id: "scan" as ViewMode, label: "Uploaded Scan" }] : []),
+    ...(analysis?.meshUrl ? [{ id: "3d" as ViewMode, label: "3D AI Mesh" }] : []),
   ];
+
+  // Auto-switch to 3D if the analysis comes in and we were looking at the scan
+  useEffect(() => {
+    if (analysis?.meshUrl && view === "scan") {
+      setView("3d");
+    }
+  }, [analysis?.meshUrl]);
 
   return (
     <div className={`flex flex-col ${className}`}>
       {/* View mode tabs */}
-      <div className="flex items-center gap-1 mb-2">
+      <div className="flex flex-wrap items-center gap-1 mb-2">
         {tabs.map(t => (
           <button
             key={t.id}
@@ -726,19 +811,24 @@ export function ShoulderAnatomyViewer({
                 : "bg-[hsl(222,47%,8%)] border border-[hsl(217,32%,16%)] text-slate-500 hover:text-slate-300"
             }`}
           >
+            {t.id === "3d" && <BoxIcon className="w-3.5 h-3.5 inline mr-1 mb-0.5" />}
             {t.label}
           </button>
         ))}
         <div className="flex-1" />
-        <button onClick={() => setZoom(z => Math.min(1.5, z + 0.1))} className="w-6 h-6 rounded flex items-center justify-center text-slate-500 hover:text-slate-300">
-          <ZoomIn className="w-3.5 h-3.5" />
-        </button>
-        <button onClick={() => setZoom(z => Math.max(0.7, z - 0.1))} className="w-6 h-6 rounded flex items-center justify-center text-slate-500 hover:text-slate-300">
-          <ZoomOut className="w-3.5 h-3.5" />
-        </button>
-        <button onClick={() => setRotX(0)} className="w-6 h-6 rounded flex items-center justify-center text-slate-500 hover:text-teal-400">
-          <RotateCw className="w-3.5 h-3.5" />
-        </button>
+        {view !== "3d" && (
+          <>
+            <button onClick={() => setZoom(z => Math.min(1.5, z + 0.1))} className="w-6 h-6 rounded flex items-center justify-center text-slate-500 hover:text-slate-300">
+              <ZoomIn className="w-3.5 h-3.5" />
+            </button>
+            <button onClick={() => setZoom(z => Math.max(0.7, z - 0.1))} className="w-6 h-6 rounded flex items-center justify-center text-slate-500 hover:text-slate-300">
+              <ZoomOut className="w-3.5 h-3.5" />
+            </button>
+            <button onClick={() => setRotX(0)} className="w-6 h-6 rounded flex items-center justify-center text-slate-500 hover:text-teal-400">
+              <RotateCw className="w-3.5 h-3.5" />
+            </button>
+          </>
+        )}
       </div>
 
       {/* Canvas */}
@@ -750,7 +840,30 @@ export function ShoulderAnatomyViewer({
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
       >
-        {view !== "scan" && (
+        {view === "3d" && (
+          <div className="absolute inset-0 bg-[#0a1520]">
+            <Canvas camera={{ position: [0, 0, 8], fov: 45 }}>
+              <ambientLight intensity={0.5} />
+              <directionalLight position={[10, 10, 5]} intensity={1.5} />
+              <directionalLight position={[-10, -10, -5]} intensity={0.5} />
+              <Environment preset="city" />
+              <MockShoulderMesh
+                glenoVersion={glenoVersion}
+                boneQuality={boneQuality}
+                implant={implant}
+                showImplant={showImplant}
+              />
+              <OrbitControls makeDefault minDistance={2} maxDistance={20} />
+              <ContactShadows resolution={1024} scale={20} blur={2} opacity={0.5} far={10} color="#000000" position={[0, -3.5, 0]} />
+            </Canvas>
+            
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/40 border border-white/10">
+              <span className="text-[10px] text-slate-500">Interactive 3D Render • Generated from AI segmentation</span>
+            </div>
+          </div>
+        )}
+        
+        {view !== "scan" && view !== "3d" && (
           <canvas
             ref={canvasRef}
             className="absolute inset-0 w-full h-full"

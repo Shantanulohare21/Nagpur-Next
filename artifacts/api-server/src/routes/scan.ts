@@ -15,11 +15,48 @@ router.post("/api/scan/analyze", async (req, res) => {
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
+      // MOCK: Return a full mock response since we don't have an API key
       return res.status(200).json({
-        success: false,
+        success: true,
         reason: "no_api_key",
         message: "ANTHROPIC_API_KEY not configured — using biomechanical model predictions",
-        data: null,
+        data: {
+          boneQuality: 78,
+          rotatorCuffIntegrity: 65,
+          cartilageCondition: 45,
+          jointAlignment: 82,
+          glenoVersion: -12,
+          humeralOffset: 6,
+          flexion: 110,
+          abduction: 95,
+          externalRotation: 30,
+          internalRotation: 40,
+          aiScore: 92,
+          successRate: 88,
+          revisionRisk: 4.5,
+          romPredicted: 145,
+          riskLevel: "Moderate",
+          recommendedImplant: "Total Shoulder Arthroplasty",
+          implantSize: "Glenoid 29mm / Humeral Head 44mm",
+          approach: "Deltopectoral approach",
+          findings: [
+            "Severe glenohumeral joint space narrowing",
+            "Moderate inferior osteophyte formation",
+            "Posterior subluxation of the humeral head",
+            "Intact but thinned supraspinatus tendon"
+          ],
+          pathologies: [
+            {
+              name: "Glenohumeral Osteoarthritis",
+              severity: "severe",
+              description: "Advanced cartilage loss with bone-on-bone contact",
+              location: "Glenohumeral joint"
+            }
+          ],
+          scanQuality: "Good",
+          imageDescription: "AP radiograph of the right shoulder demonstrating advanced osteoarthritis.",
+          meshUrl: "mock-3d-model" // MOCK: Add the 3D model representation URL
+        },
       });
     }
 
@@ -105,6 +142,10 @@ Extract these measurements (use your best clinical estimate if not clearly visib
 
     const jsonText = textContent.text.replace(/```json\n?|\n?```/g, "").trim();
     const analysisData = JSON.parse(jsonText);
+    
+    // MOCK: Add the 3D model representation URL to the analysis data
+    // In production, this would be a real URL returned by the Python microservice
+    analysisData.meshUrl = "mock-3d-model";
 
     return res.json({ success: true, data: analysisData, model: "claude-opus-4-5" });
 

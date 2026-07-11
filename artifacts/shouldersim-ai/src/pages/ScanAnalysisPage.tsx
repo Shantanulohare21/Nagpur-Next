@@ -175,6 +175,7 @@ function ResultsDashboard() {
             ...(typeof ai.implantSize === "string" ? { implantSize: ai.implantSize } : {}),
             ...(Array.isArray(ai.findings) ? { findings: ai.findings as string[] } : {}),
             ...(Array.isArray(ai.pathologies) ? { pathologies: ai.pathologies as typeof cur.pathologies } : {}),
+            ...(typeof ai.meshUrl === "string" ? { meshUrl: ai.meshUrl } : {}),
           });
           setAiStatus("enhanced");
         } else if (data.reason === "no_api_key") {
