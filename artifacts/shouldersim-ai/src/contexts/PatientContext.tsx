@@ -18,6 +18,7 @@ export interface ScanFile {
   name: string; type: string; size: number; uploadedAt: string; modality: "MRI" | "CT" | "XRAY" | "DICOM";
   dataUrl?: string;
   previewUrl?: string;
+  file?: File;
 }
 
 export interface AnalysisResult {
@@ -67,6 +68,15 @@ export interface PatientState {
   info: PatientInfo | null;
   clinical: ClinicalHistory | null;
   scans: ScanFile[];
+  rawFiles?: File[];
+  reconstruction: {
+    glbUrl?: string;
+    glbBase64?: string;
+    metadata?: Record<string, any>;
+    measurements?: Record<string, any>;
+    structures?: string[];
+    modality?: string;
+  } | null;
   analysis: AnalysisResult | null;
   completedSteps: string[];
   reportId: string;
@@ -74,7 +84,7 @@ export interface PatientState {
 }
 
 const EMPTY: PatientState = {
-  info: null, clinical: null, scans: [], analysis: null,
+  info: null, clinical: null, scans: [], rawFiles: [], reconstruction: null, analysis: null,
   completedSteps: [], reportId: "", reportDate: "",
 };
 
@@ -83,7 +93,9 @@ interface PatientContextType {
   setInfo: (info: PatientInfo) => void;
   setClinical: (c: ClinicalHistory) => void;
   setScans: (s: ScanFile[]) => void;
-  setAnalysis: (a: AnalysisResult) => void;
+  setRawFiles: (files: File[]) => void;
+  setReconstruction: (r: any) => void;
+  setAnalysis: (a: AnalysisResult | ((prev: AnalysisResult | null) => AnalysisResult | null)) => void;
   markStep: (step: string) => void;
   reset: () => void;
 }
@@ -107,11 +119,17 @@ export function PatientProvider({ children }: { children: React.ReactNode }) {
 
   const setClinical = (clinical: ClinicalHistory) => setState(s => ({ ...s, clinical }));
   const setScans = (scans: ScanFile[]) => setState(s => ({ ...s, scans }));
-  const setAnalysis = (analysis: AnalysisResult) => setState(s => ({ ...s, analysis }));
+  const setRawFiles = (rawFiles: File[]) => setState(s => ({ ...s, rawFiles }));
+  const setReconstruction = (reconstruction: any) => setState(s => ({ ...s, reconstruction }));
+  const setAnalysis = (analysis: AnalysisResult | ((prev: AnalysisResult | null) => AnalysisResult | null)) =>
+    setState(s => ({
+      ...s,
+      analysis: typeof analysis === "function" ? analysis(s.analysis) : analysis,
+    }));
   const markStep = (step: string) => setState(s => ({ ...s, completedSteps: [...new Set([...s.completedSteps, step])] }));
   const reset = () => { setState(EMPTY); localStorage.removeItem("ssim_patient"); };
 
-  return <PatientCtx.Provider value={{ state, setInfo, setClinical, setScans, setAnalysis, markStep, reset }}>{children}</PatientCtx.Provider>;
+  return <PatientCtx.Provider value={{ state, setInfo, setClinical, setScans, setRawFiles, setReconstruction, setAnalysis, markStep, reset }}>{children}</PatientCtx.Provider>;
 }
 
 export function usePatient() {

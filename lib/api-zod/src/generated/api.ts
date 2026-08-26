@@ -14,3 +14,33 @@ import * as zod from "zod";
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
 });
+
+export const SimulationResponse = zod.object({
+  success: zod.boolean(),
+  mode: zod.string(),
+  data: zod.object({
+    predictedImplant: zod.string(),
+    predictedImplantSize: zod.string(),
+    recommendedApproach: zod.string(),
+    aiScore: zod.number(),
+    successRate: zod.number(),
+    revisionRisk: zod.number(),
+    predictedRom: zod.number(),
+    riskLevel: zod.string(),
+    stabilityIndex: zod.number(),
+    stressIndex: zod.number(),
+    wearRisk: zod.number(),
+    collisionRisk: zod.number(),
+    reasoning: zod.array(zod.string()),
+  }),
+});
+
+export const CopilotResponse = zod.object({
+  success: zod.boolean(),
+  mode: zod.string(),
+  response: zod.string(),
+  diagnostics: zod.object({
+    ollamaStatus: zod.string(),
+    reason: zod.string().optional(),
+  }).optional(),
+});

@@ -327,11 +327,37 @@ export default function AICopilotPage() {
     setMessages(prev => [...prev, userMsg]);
     setLoading(true);
 
-    await new Promise(r => setTimeout(r, 1400 + Math.random() * 800));
+    try {
+      const response = await fetch("/api/ai/copilot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: msg }),
+      });
 
-    const response = getAIResponse(msg);
-    setMessages(prev => [...prev, response]);
-    setLoading(false);
+      if (!response.ok) {
+        throw new Error(`Copilot request failed with status ${response.status}`);
+      }
+
+      const payload = (await response.json()) as { success?: boolean; response?: string; mode?: string };
+      const content = payload.response ?? "I’m unavailable right now. Please try again.";
+      const aiMessage: Message = {
+        id: Date.now().toString(),
+        role: "assistant",
+        type: "text",
+        timestamp: new Date(),
+        metadata: {
+          confidence: payload.mode === "ollama" ? 95 : 88,
+          sources: payload.mode === "ollama" ? ["Ollama Local Runtime", "Clinical Knowledge Base"] : ["Clinical Knowledge Base"],
+        },
+        content,
+      };
+      setMessages(prev => [...prev, aiMessage]);
+    } catch (err) {
+      const fallback = getAIResponse(msg);
+      setMessages(prev => [...prev, fallback]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const reset = () => {

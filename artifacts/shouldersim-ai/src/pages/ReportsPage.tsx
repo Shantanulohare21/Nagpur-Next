@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
 import {
@@ -298,8 +298,8 @@ function ReportPreview({ report }: { report: ReportItem }) {
         </div>
 
         <div className="flex gap-3">
-          <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-[hsl(189,94%,40%)] text-[hsl(222,47%,5%)] font-bold text-sm hover:bg-[hsl(189,94%,45%)] transition-colors">
-            {exporting ? (
+          <button onClick={generateReport} disabled={reportGenerating} className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-[hsl(189,94%,40%)] text-[hsl(222,47%,5%)] font-bold text-sm hover:bg-[hsl(189,94%,45%)] transition-colors disabled:opacity-65">
+            {reportGenerating ? (
               <><div className="w-4 h-4 border-2 border-[hsl(222,47%,5%)] border-t-transparent rounded-full animate-spin" />Generating…</>
             ) : (
               <><FileDown className="w-4 h-4" />Generate Report</>
@@ -324,10 +324,93 @@ export default function ReportsPage() {
   const [selected, setSelected] = useState<ReportItem | null>(null);
   const [showBuilder, setShowBuilder] = useState(false);
   const [quickExporting, setQuickExporting] = useState<string | null>(null);
+  const [reportGenerating, setReportGenerating] = useState(false);
+  const [apiReports, setApiReports] = useState<ReportItem[]>([]);
   const { state } = usePatient();
   const { generatePDFReport: _pdf, generateJSONReport: _json, generateCSVReport: _csv } = { generatePDFReport, generateJSONReport, generateCSVReport };
 
+  useEffect(() => {
+    const loadReports = async () => {
+      try {
+        const response = await fetch("/api/reports");
+        if (!response.ok) {
+          throw new Error(`Failed to read reports ${response.status}`);
+        }
+
+        const payload = await response.json();
+        const data = Array.isArray(payload?.data) ? payload.data : [];
+
+        const liveReports = data.map((entry: any): ReportItem => {
+          const status = String(entry.status ?? "Draft");
+          const normalizedStatus = status.toLowerCase() === "final" || status.toLowerCase() === "completed" ? "Final" :
+            status.toLowerCase() === "exported" ? "Exported" : "Draft";
+
+          return {
+            id: String(entry.id ?? entry.reportId ?? "RPT-UNKNOWN"),
+            patient: String(entry.patientName ?? "Unknown Patient"),
+            age: 65,
+            sex: "M",
+            diagnosis: String(entry.diagnosis ?? "Shoulder pathology"),
+            implant: String(entry.implant ?? "AI recommendation pending"),
+            surgeon: String(entry.surgeon ?? "Dr. Sarah Chen"),
+            date: new Date(String(entry.createdAt ?? Date.now())).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+            status: normalizedStatus as ReportItem["status"],
+            aiScore: Number(entry.aiScore ?? 90),
+            riskLevel: (String(entry.riskLevel ?? "Moderate") as ReportItem["riskLevel"]),
+            type: "Pre-op",
+          };
+        });
+
+        setApiReports(liveReports);
+      } catch (error) {
+        console.warn("Reports API unavailable; using default report shell", error);
+        setApiReports([]);
+      }
+    };
+
+    void loadReports();
+  }, []);
+
   const hasPatient = !!(state.info && state.clinical);
+
+  const generateReport = async () => {
+    if (!state.info || !state.clinical) return;
+
+    setReportGenerating(true);
+
+    try {
+      const payload = {
+        reportId: state.reportId || `RPT-${Date.now().toString(36).toUpperCase()}`,
+        patientName: state.info.name,
+        diagnosis: state.clinical.diagnosis,
+        implant: state.analysis?.recommendedImplant || "AI recommendation pending",
+        surgeon: state.clinical.surgeon,
+        facility: state.clinical.facility,
+        aiScore: state.analysis?.aiScore ?? 90,
+        riskLevel: state.analysis?.riskLevel ?? "Moderate",
+        status: "draft",
+      };
+
+      const response = await fetch("/api/reports", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Report save failed with ${response.status}`);
+      }
+
+      const result = await response.json();
+      if (!result?.success) {
+        throw new Error("Report API did not return success");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setReportGenerating(false);
+    }
+  };
 
   const quickExport = async (format: string) => {
     if (!state.info || !state.clinical) return;
@@ -370,7 +453,9 @@ export default function ReportsPage() {
     }
   };
 
-  const filtered = REPORTS.filter(r => {
+  const reportPool = apiReports.length > 0 ? apiReports : REPORTS;
+
+  const filtered = reportPool.filter(r => {
     const q = search.toLowerCase();
     const matchSearch = !q || r.patient.toLowerCase().includes(q) || r.id.toLowerCase().includes(q) || r.diagnosis.toLowerCase().includes(q);
     const matchType = typeFilter === "all" || r.type === typeFilter;

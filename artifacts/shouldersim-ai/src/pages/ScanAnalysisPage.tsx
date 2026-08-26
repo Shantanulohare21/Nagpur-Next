@@ -123,7 +123,7 @@ function ScoreGauge({ value, label, color }: { value: number; label: string; col
 }
 
 function ResultsDashboard() {
-  const { state, setAnalysis, markStep } = usePatient();
+  const { state, setAnalysis, setReconstruction, markStep } = usePatient();
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState("overview");
   const [aiStatus, setAiStatus] = useState<"idle" | "loading" | "enhanced" | "no_key" | "error">("idle");
@@ -142,6 +142,78 @@ function ResultsDashboard() {
     if (!scanWithImage?.dataUrl || !state.analysis) return;
 
     setAiStatus("loading");
+
+    const runDirectReconstruction = async () => {
+      try {
+        const formData = new FormData();
+        let hasFiles = false;
+
+        if (state.rawFiles && state.rawFiles.length > 0) {
+          state.rawFiles.forEach(file => {
+            formData.append("files", file);
+          });
+          hasFiles = true;
+        } else if (scanWithImage?.dataUrl) {
+          const [mimePart, base64Part] = scanWithImage.dataUrl.split(",");
+          const mime = mimePart.match(/:(.*?);/)?.[1] || "image/png";
+          const byteCharacters = atob(base64Part);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray], { type: mime });
+          formData.append("files", blob, `uploaded_scan.${mime.split("/")[1] || "png"}`);
+          hasFiles = true;
+        }
+
+        if (!hasFiles) return;
+
+        // Use Otsu thresholding by default for testing with simple datasets
+        formData.append("use_otsu", "true");
+
+        const response = await fetch("http://127.0.0.1:8000/reconstruction/generate", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (response.ok) {
+          const resData = await response.json();
+          if (resData.glb_base64) {
+            const meshUrl = `data:model/gltf-binary;base64,${resData.glb_base64}`;
+            setReconstruction({
+              glbBase64: resData.glb_base64,
+              glbUrl: meshUrl,
+              metadata: resData.metadata || {},
+              measurements: resData.measurements || {},
+              structures: resData.structures || [],
+              modality: resData.modality || (scanWithImage?.modality || "auto"),
+            });
+            setAnalysis((prev: AnalysisResult | null): AnalysisResult | null => {
+              if (!prev) return null;
+              return { ...prev, meshUrl };
+            });
+          }
+          if (resData.measurements) {
+             const m = resData.measurements;
+             // Overlay some measurements onto the analysis
+             setAnalysis((prev: AnalysisResult | null): AnalysisResult | null => {
+               if (!prev) return null;
+               return {
+                 ...prev,
+                 ...(m.bone_density ? { boneQuality: m.bone_density.bone_quality_score } : {}),
+                 ...(m.glenoid_version ? { glenoVersion: m.glenoid_version.version_degrees } : {}),
+               };
+             });
+          }
+        }
+      } catch (err) {
+        console.error("Direct 3D reconstruction call note:", err);
+      }
+    };
+
+    runDirectReconstruction();
+
     fetch("/api/scan/analyze", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

@@ -4,7 +4,7 @@ from sqlalchemy.orm import declarative_base
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql+asyncpg://shoulder_user:shoulder_pass@db:5432/shoulder_db",
+    "sqlite+aiosqlite:///./test.db",
 )
 
 engine = create_async_engine(DATABASE_URL, echo=False, future=True)

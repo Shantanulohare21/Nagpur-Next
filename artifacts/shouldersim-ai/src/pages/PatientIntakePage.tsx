@@ -293,13 +293,14 @@ function StepScans({ info, clinical, onNext, onBack }: { info: PatientInfo; clin
           modality,
           dataUrl,
           previewUrl: isImage ? dataUrl : undefined,
+          file,
         };
         setUploading(null);
         setFiles(prev => [...prev.filter(f => f.name !== file.name), sf]);
         setShowQuestionnaire(true);
       };
       reader.onerror = () => {
-        const sf: ScanFile = { name: file.name, type: file.type || "application/octet-stream", size: file.size, uploadedAt: new Date().toISOString(), modality };
+        const sf: ScanFile = { name: file.name, type: file.type || "application/octet-stream", size: file.size, uploadedAt: new Date().toISOString(), modality, file };
         setUploading(null);
         setFiles(prev => [...prev.filter(f => f.name !== file.name), sf]);
         setShowQuestionnaire(true);
@@ -550,7 +551,7 @@ function StepReview({ info, clinical, scans, onBack, onSubmit }: {
 
 export default function PatientIntakePage() {
   const [step, setStep] = useState(0);
-  const { state, setInfo, setClinical, setScans, markStep } = usePatient();
+  const { state, setInfo, setClinical, setScans, setRawFiles, markStep } = usePatient();
   const [, setLocation] = useLocation();
 
   const handleInfo = (info: PatientInfo) => {
@@ -560,7 +561,9 @@ export default function PatientIntakePage() {
     setClinical(c); markStep("clinical"); setStep(2);
   };
   const handleScans = (s: ScanFile[]) => {
-    setScans(s); markStep("scans"); setStep(3);
+    setScans(s); 
+    setRawFiles(s.map(x => x.file).filter(Boolean) as File[]);
+    markStep("scans"); setStep(3);
   };
   const handleSubmit = () => {
     markStep("review");

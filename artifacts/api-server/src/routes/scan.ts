@@ -16,47 +16,99 @@ router.post("/api/scan/analyze", async (req, res) => {
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
       // MOCK: Return a full mock response since we don't have an API key
+      const mockData: {
+        boneQuality: number;
+        rotatorCuffIntegrity: number;
+        cartilageCondition: number;
+        jointAlignment: number;
+        glenoVersion: number;
+        humeralOffset: number;
+        flexion: number;
+        abduction: number;
+        externalRotation: number;
+        internalRotation: number;
+        aiScore: number;
+        successRate: number;
+        revisionRisk: number;
+        romPredicted: number;
+        riskLevel: "Low" | "Moderate" | "High";
+        recommendedImplant: string;
+        implantSize: string;
+        approach: string;
+        findings: string[];
+        pathologies: Array<{
+          name: string;
+          severity: "mild" | "moderate" | "severe";
+          description: string;
+          location: string;
+        }>;
+        scanQuality: "Excellent" | "Good" | "Fair" | "Poor";
+        imageDescription: string;
+        meshUrl?: string;
+      } = {
+        boneQuality: 78,
+        rotatorCuffIntegrity: 65,
+        cartilageCondition: 45,
+        jointAlignment: 82,
+        glenoVersion: -12,
+        humeralOffset: 6,
+        flexion: 110,
+        abduction: 95,
+        externalRotation: 30,
+        internalRotation: 40,
+        aiScore: 92,
+        successRate: 88,
+        revisionRisk: 4.5,
+        romPredicted: 145,
+        riskLevel: "Moderate",
+        recommendedImplant: "Total Shoulder Arthroplasty",
+        implantSize: "Glenoid 29mm / Humeral Head 44mm",
+        approach: "Deltopectoral approach",
+        findings: [
+          "Severe glenohumeral joint space narrowing",
+          "Moderate inferior osteophyte formation",
+          "Posterior subluxation of the humeral head",
+          "Intact but thinned supraspinatus tendon"
+        ],
+        pathologies: [
+          {
+            name: "Glenohumeral Osteoarthritis",
+            severity: "severe",
+            description: "Advanced cartilage loss with bone-on-bone contact",
+            location: "Glenohumeral joint"
+          }
+        ],
+        scanQuality: "Good",
+        imageDescription: "AP radiograph of the right shoulder demonstrating advanced osteoarthritis."
+      };
+
+      if (imageDataUrl) {
+        try {
+          const [mimePart, base64Part] = imageDataUrl.split(",");
+          const mime = mimePart.match(/:(.*?);/)?.[1] || "image/png";
+          const buffer = Buffer.from(base64Part, "base64");
+          const fileBlob = new Blob([buffer], { type: mime });
+          const formData = new FormData();
+          formData.append("files", fileBlob, `scan.${mime.split("/")[1] || "png"}`);
+          const pythonBaseUrl = process.env.PYTHON_BACKEND_URL || "http://localhost:8000";
+          const pyResponse = await fetch(`${pythonBaseUrl}/reconstruction/generate?use_otsu=true`, {
+            method: "POST",
+            body: formData,
+          });
+          if (pyResponse.ok) {
+            const pyData = (await pyResponse.json()) as { glb_base64: string };
+            mockData.meshUrl = `data:model/gltf-binary;base64,${pyData.glb_base64}`;
+          }
+        } catch (err) {
+          console.error("Python reconstruction failed in mock path:", err);
+        }
+      }
+
       return res.status(200).json({
         success: true,
         reason: "no_api_key",
         message: "ANTHROPIC_API_KEY not configured — using biomechanical model predictions",
-        data: {
-          boneQuality: 78,
-          rotatorCuffIntegrity: 65,
-          cartilageCondition: 45,
-          jointAlignment: 82,
-          glenoVersion: -12,
-          humeralOffset: 6,
-          flexion: 110,
-          abduction: 95,
-          externalRotation: 30,
-          internalRotation: 40,
-          aiScore: 92,
-          successRate: 88,
-          revisionRisk: 4.5,
-          romPredicted: 145,
-          riskLevel: "Moderate",
-          recommendedImplant: "Total Shoulder Arthroplasty",
-          implantSize: "Glenoid 29mm / Humeral Head 44mm",
-          approach: "Deltopectoral approach",
-          findings: [
-            "Severe glenohumeral joint space narrowing",
-            "Moderate inferior osteophyte formation",
-            "Posterior subluxation of the humeral head",
-            "Intact but thinned supraspinatus tendon"
-          ],
-          pathologies: [
-            {
-              name: "Glenohumeral Osteoarthritis",
-              severity: "severe",
-              description: "Advanced cartilage loss with bone-on-bone contact",
-              location: "Glenohumeral joint"
-            }
-          ],
-          scanQuality: "Good",
-          imageDescription: "AP radiograph of the right shoulder demonstrating advanced osteoarthritis.",
-          meshUrl: "mock-3d-model" // MOCK: Add the 3D model representation URL
-        },
+        data: mockData,
       });
     }
 
@@ -142,10 +194,28 @@ Extract these measurements (use your best clinical estimate if not clearly visib
 
     const jsonText = textContent.text.replace(/```json\n?|\n?```/g, "").trim();
     const analysisData = JSON.parse(jsonText);
-    
-    // MOCK: Add the 3D model representation URL to the analysis data
-    // In production, this would be a real URL returned by the Python microservice
-    analysisData.meshUrl = "mock-3d-model";
+
+    if (imageDataUrl) {
+      try {
+        const [mimePart, base64Part] = imageDataUrl.split(",");
+        const mime = mimePart.match(/:(.*?);/)?.[1] || "image/png";
+        const buffer = Buffer.from(base64Part, "base64");
+        const fileBlob = new Blob([buffer], { type: mime });
+        const formData = new FormData();
+        formData.append("files", fileBlob, `scan.${mime.split("/")[1] || "png"}`);
+        const pythonBaseUrl = process.env.PYTHON_BACKEND_URL || "http://localhost:8000";
+        const pyResponse = await fetch(`${pythonBaseUrl}/reconstruction/generate?use_otsu=true`, {
+          method: "POST",
+          body: formData,
+        });
+        if (pyResponse.ok) {
+          const pyData = (await pyResponse.json()) as { glb_base64: string };
+          analysisData.meshUrl = `data:model/gltf-binary;base64,${pyData.glb_base64}`;
+        }
+      } catch (err) {
+        console.error("Python reconstruction failed in normal path:", err);
+      }
+    }
 
     return res.json({ success: true, data: analysisData, model: "claude-opus-4-5" });
 

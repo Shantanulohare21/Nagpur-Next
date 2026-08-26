@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useCallback, useState } from "react";
 import type { AnalysisResult } from "@/contexts/PatientContext";
 import { RotateCw, Layers, Ruler, Eye, ZoomIn, ZoomOut, Box as BoxIcon } from "lucide-react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Environment, Sphere, Cylinder, Box, ContactShadows } from "@react-three/drei";
+import { OrbitControls, Environment, Sphere, Cylinder, Box, ContactShadows, useGLTF } from "@react-three/drei";
 
 interface ShoulderAnatomyViewerProps {
   analysis?: AnalysisResult | null;
@@ -586,6 +586,22 @@ function drawLateralView(
   ctx.fillText("LATERAL VIEW", u * 0.15, h - u * 0.15);
 }
 
+function RealGLBMesh({ url }: { url: string }) {
+  try {
+    const { scene } = useGLTF(url);
+    return (
+      <primitive
+        object={scene}
+        scale={[0.08, 0.08, 0.08]}
+        position={[0, 0, 0]}
+        rotation={[0, Math.PI / 4, 0]}
+      />
+    );
+  } catch {
+    return null;
+  }
+}
+
 function MockShoulderMesh({ glenoVersion, boneQuality, implant, showImplant }: { glenoVersion: number, boneQuality: number, implant: string, showImplant: boolean }) {
   const boneColor = boneQuality > 0.8 ? "#e2e8f0" : "#cbd5e1"; // Healthy vs osteopenic
   const isRSA = implant.toLowerCase().includes("reverse");
@@ -628,7 +644,7 @@ function MockShoulderMesh({ glenoVersion, boneQuality, implant, showImplant }: {
         <group>
           {/* Glenoid Component (Poly) */}
           <Cylinder args={[0.7, 0.7, 0.2, 32]} position={[-0.2, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-            <meshStandardMaterial color="#ffffff" roughness={0.2} transmission={0.9} thickness={0.5} opacity={0.8} transparent />
+            <meshPhysicalMaterial color="#ffffff" roughness={0.2} opacity={0.8} transparent />
           </Cylinder>
           {/* Humeral Head Component (Metal) */}
           <Sphere args={[0.78, 32, 32]} position={[0.7, 0.2, 0]} rotation={[0, 0, 0]}>
@@ -847,12 +863,25 @@ export function ShoulderAnatomyViewer({
               <directionalLight position={[10, 10, 5]} intensity={1.5} />
               <directionalLight position={[-10, -10, -5]} intensity={0.5} />
               <Environment preset="city" />
-              <MockShoulderMesh
-                glenoVersion={glenoVersion}
-                boneQuality={boneQuality}
-                implant={implant}
-                showImplant={showImplant}
-              />
+              {analysis?.meshUrl ? (
+                <React.Suspense fallback={
+                  <MockShoulderMesh
+                    glenoVersion={glenoVersion}
+                    boneQuality={boneQuality}
+                    implant={implant}
+                    showImplant={showImplant}
+                  />
+                }>
+                  <RealGLBMesh url={analysis.meshUrl} />
+                </React.Suspense>
+              ) : (
+                <MockShoulderMesh
+                  glenoVersion={glenoVersion}
+                  boneQuality={boneQuality}
+                  implant={implant}
+                  showImplant={showImplant}
+                />
+              )}
               <OrbitControls makeDefault minDistance={2} maxDistance={20} />
               <ContactShadows resolution={1024} scale={20} blur={2} opacity={0.5} far={10} color="#000000" position={[0, -3.5, 0]} />
             </Canvas>

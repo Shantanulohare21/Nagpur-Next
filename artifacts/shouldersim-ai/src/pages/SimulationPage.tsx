@@ -1315,6 +1315,43 @@ export default function SimulationPage() {
     implant: patientState.analysis?.recommendedImplant || "AI Recommendation Pending",
   } : null;
 
+  const handleSaveCase = async () => {
+    try {
+      const payload = {
+        patientName: patientState.info?.name ?? "Unknown Patient",
+        diagnosis: patientState.clinical?.diagnosis ?? "Shoulder Pathology",
+        surgeon: patientState.clinical?.surgeon ?? "Dr. Sarah Chen",
+        facility: patientState.clinical?.facility ?? "ShoulderSIM Medical Center",
+        implant: patientState.analysis?.recommendedImplant ?? "AI Recommendation Pending",
+        riskLevel: patientState.analysis?.riskLevel ?? "Moderate",
+        aiScore: patientState.analysis?.aiScore ?? 90,
+        status: "draft",
+      };
+
+      const response = await fetch("/api/cases", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Case save failed with ${response.status}`);
+      }
+
+      const result = await response.json();
+      if (!result?.success) {
+        throw new Error("The case save API returned an unsuccessful payload");
+      }
+
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(message);
+      setSaved(false);
+    }
+  };
+
   const allPatients = ctxPatient ? [ctxPatient, ...patients] : patients;
 
   const [selectedPatient, setSelectedPatient] = useState(0);
@@ -1374,7 +1411,7 @@ export default function SimulationPage() {
               {simulationRunning ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
               {simulationRunning ? "Stop Sim" : "Run Sim"}
             </button>
-            <button onClick={() => { setSaved(true); setTimeout(() => setSaved(false), 2000); }}
+            <button onClick={handleSaveCase}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-card/60 border border-border/40 text-xs text-muted-foreground hover:text-foreground transition-all">
               {saved ? <Check className="w-3 h-3 text-green-400" /> : <Save className="w-3 h-3" />}
               {saved ? "Saved!" : "Save"}

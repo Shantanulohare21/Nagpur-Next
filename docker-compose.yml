@@ -32,5 +32,17 @@ services:
       - "6379:6379"
     restart: unless-stopped
 
+  celery:
+    build:
+      context: ./artifacts/backend
+      dockerfile: Dockerfile
+    command: celery -A app.celery_app worker --loglevel=info
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+
 volumes:
   db_data:
