@@ -6,7 +6,7 @@ import {
   Zap, Target, BarChart3, Shield, TrendingUp, Eye, Layers, FileText,
   User, Scan, Heart, Package, Clock, Star, AlertCircle, ArrowRight
 } from "lucide-react";
-import { usePatient, generateAnalysis } from "@/contexts/PatientContext";
+import { usePatient, generateAnalysis, AnalysisResult } from "@/contexts/PatientContext";
 import { WorkflowBanner } from "@/components/WorkflowBanner";
 import { ShoulderAnatomyViewer } from "@/components/ShoulderAnatomyViewer";
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";

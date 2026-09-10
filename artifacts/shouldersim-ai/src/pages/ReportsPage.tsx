@@ -298,8 +298,8 @@ function ReportPreview({ report }: { report: ReportItem }) {
         </div>
 
         <div className="flex gap-3">
-          <button onClick={generateReport} disabled={reportGenerating} className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-[hsl(189,94%,40%)] text-[hsl(222,47%,5%)] font-bold text-sm hover:bg-[hsl(189,94%,45%)] transition-colors disabled:opacity-65">
-            {reportGenerating ? (
+          <button onClick={() => doExport("pdf")} disabled={exporting} className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-[hsl(189,94%,40%)] text-[hsl(222,47%,5%)] font-bold text-sm hover:bg-[hsl(189,94%,45%)] transition-colors disabled:opacity-65">
+            {exporting ? (
               <><div className="w-4 h-4 border-2 border-[hsl(222,47%,5%)] border-t-transparent rounded-full animate-spin" />Generating…</>
             ) : (
               <><FileDown className="w-4 h-4" />Generate Report</>
