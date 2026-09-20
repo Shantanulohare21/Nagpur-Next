@@ -1,0 +1,9 @@
+.venv
+artifacts/backend/.venv
+node_modules
+dist
+.git
+*.log
+*.db
+artifacts/backend/test.db
+artifacts/backend/test_output.glb
